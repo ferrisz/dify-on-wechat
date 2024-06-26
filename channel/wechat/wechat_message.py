@@ -1,4 +1,5 @@
 import re
+import json
 
 from bridge.context import ContextType
 from channel.chat_message import ChatMessage
@@ -66,7 +67,7 @@ class WechatMessage(ChatMessage):
         self.from_user_id = itchat_msg["FromUserName"]
         self.to_user_id = itchat_msg["ToUserName"]
 
-        logger.info("[WX]get storageClass : " + str(itchat.instance.storageClass))
+        logger.info("[WX]get storageClass : " + str(json.dumps(itchat.instance.storageClass)))
 
         user_id = itchat.instance.storageClass.userName
         nickname = itchat.instance.storageClass.nickName
