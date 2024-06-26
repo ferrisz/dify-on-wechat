@@ -67,8 +67,10 @@ class WechatMessage(ChatMessage):
         self.to_user_id = itchat_msg["ToUserName"]
 
         user_id = itchat.instance.storageClass.userName
-        nickname = itchat.instance.storageClass.nickName
-
+        nickname = itchat.instance.storgeClass.remarkName
+        if nickname == '' || nickname == None:
+            nickname = itchat.instance.storageClass.nickName
+            
         # 虽然from_user_id和to_user_id用的少，但是为了保持一致性，还是要填充一下
         # 以下很繁琐，一句话总结：能填的都填了。
         if self.from_user_id == user_id:
