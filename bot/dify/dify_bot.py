@@ -59,7 +59,9 @@ class DifyBot(Bot):
 
     def _get_payload(self, query, session: DifySession, response_mode):
         return {
-            'inputs': {},
+            "inputs": {
+                "user": session.get_user()
+            },
             "query": query,
             "response_mode": response_mode,
             "conversation_id": session.get_conversation_id(),
