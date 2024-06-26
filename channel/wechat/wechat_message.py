@@ -67,7 +67,7 @@ class WechatMessage(ChatMessage):
         self.from_user_id = itchat_msg["FromUserName"]
         self.to_user_id = itchat_msg["ToUserName"]
 
-        logger.info("[WX]get storageClass : " + str(json.dumps(itchat.instance.storageClass)))
+        print(itchat.instance.storageClass)
 
         user_id = itchat.instance.storageClass.userName
         nickname = itchat.instance.storageClass.nickName
