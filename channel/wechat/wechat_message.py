@@ -67,7 +67,7 @@ class WechatMessage(ChatMessage):
         self.from_user_id = itchat_msg["FromUserName"]
         self.to_user_id = itchat_msg["ToUserName"]
 
-        print(itchat.instance.storageClass)
+        print(itchat_msg)
 
         user_id = itchat.instance.storageClass.userName
         nickname = itchat.instance.storageClass.nickName
