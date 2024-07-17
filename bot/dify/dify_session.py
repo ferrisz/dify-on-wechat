@@ -3,9 +3,10 @@ from config import conf
 
 
 class DifySession(object):
-    def __init__(self, session_id: str, user: str, conversation_id: str=''):
+    def __init__(self, session_id: str, user: str, username: str='', conversation_id: str=''):
         self.__session_id = session_id
         self.__user = user
+        self.__username = username
         self.__conversation_id = conversation_id
         self.__user_message_counter = 0
 
@@ -14,6 +15,9 @@ class DifySession(object):
 
     def get_user(self):
         return self.__user
+
+    def get_username(self):
+        return self.__username
 
     def get_conversation_id(self):
         return self.__conversation_id
@@ -26,8 +30,9 @@ class DifySession(object):
             self.__user_message_counter = 0
             # FIXME: dify目前不支持设置历史消息长度，暂时使用超过5条清空会话的策略，缺点是没有滑动窗口，会突然丢失历史消息
             self.__conversation_id = ''
-        
+
         self.__user_message_counter += 1
+
 
 class DifySessionManager(object):
     def __init__(self, sessioncls, **session_kwargs):
@@ -39,20 +44,20 @@ class DifySessionManager(object):
         self.sessioncls = sessioncls
         self.session_kwargs = session_kwargs
 
-    def _build_session(self, session_id: str, user: str):
+    def _build_session(self, session_id: str, user: str, username: str):
         """
         如果session_id不在sessions中，创建一个新的session并添加到sessions中
         """
         if session_id is None:
-            return self.sessioncls(session_id, user)
+            return self.sessioncls(session_id, user, username)
 
         if session_id not in self.sessions:
-            self.sessions[session_id] = self.sessioncls(session_id, user)
+            self.sessions[session_id] = self.sessioncls(session_id, user, username)
         session = self.sessions[session_id]
         return session
 
-    def get_session(self, session_id, user):
-        session = self._build_session(session_id, user)
+    def get_session(self, session_id, user, username):
+        session = self._build_session(session_id, user, username)
         return session
 
     def clear_session(self, session_id):

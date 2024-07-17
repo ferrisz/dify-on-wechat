@@ -12,6 +12,7 @@ from common.log import logger
 from common import const
 from config import conf
 
+
 class DifyBot(Bot):
     def __init__(self):
         super().__init__()
@@ -27,15 +28,19 @@ class DifyBot(Bot):
             # TODO: 适配除微信以外的其他channel
             channel_type = conf().get("channel_type", "wx")
             user = None
+            username = None
             if channel_type == "wx":
-                user = context["msg"].other_user_remarkname if context.get("msg") else "default"
+                user = context["msg"].other_user_id if context.get("msg") else "default"
+                username = context["msg"].other_user_remarkname if context.get("msg") else "default"
+                # user = context["msg"].other_user_remarkname if context.get("msg") else "default"
             elif channel_type in ["wechatcom_app", "wechatmp", "wechatmp_service", "wechatcom_service", "wework"]:
                 user = context["msg"].other_user_id if context.get("msg") else "default"
             else:
                 return Reply(ReplyType.ERROR, f"unsupported channel type: {channel_type}, now dify only support wx, wechatcom_app, wechatmp, wechatmp_service channel")
             logger.debug(f"[DIFY] dify_user={user}")
             user = user if user else "default" # 防止用户名为None，当被邀请进的群未设置群名称时用户名为None
-            session = self.sessions.get_session(session_id, user)
+            username = username if username else user # 防止用户名为None，当被邀请进的群未设置群名称时用户名为None
+            session = self.sessions.get_session(session_id, user, username)
             logger.debug(f"[DIFY] session={session} query={query}")
 
             reply, err = self._reply(query, session, context)
@@ -60,7 +65,7 @@ class DifyBot(Bot):
     def _get_payload(self, query, session: DifySession, response_mode):
         return {
             "inputs": {
-                "user": session.get_user()
+                "username": session.get_username()
             },
             "query": query,
             "response_mode": response_mode,
@@ -141,7 +146,7 @@ class DifyBot(Bot):
             error_info = f"[DIFY] response text={response.text} status_code={response.status_code}"
             logger.warn(error_info)
             return None, error_info
- 
+
         msgs, conversation_id = self._handle_sse_response(response)
         channel = context.get("channel")
         # TODO: 适配除微信以外的其他channel
